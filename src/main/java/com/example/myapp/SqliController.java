@@ -16,7 +16,6 @@ public class SqliController {
     private static final String DB_CONN_STR = "jdbc://h2:mem:testdb";
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "@#2kjndf3nkj!";
-    private static final String SECRET = "asdasd2W#I@#nk";
 
     @GetMapping("/sqli")
     public String vulnerable(@RequestParam String username) {
@@ -36,8 +35,6 @@ public class SqliController {
             while (rs.next()) {
                 result.append("User: ").append(rs.getString("username")).append("<br>");
             }
-
-            result.append("Secret: " + SECRET);
 
             stmt.close();
             conn.close();
