@@ -36,14 +36,23 @@ public class SqliController {
                 result.append("User: ").append(rs.getString("username")).append("<br>");
             }
 
-            stmt.close();
-            conn.close();
         } catch (SQLException e) {
             return "SQL Error: " + e.getMessage();
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         } finally {
-
+            if (stmt != null)
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
 
         return result.toString();
