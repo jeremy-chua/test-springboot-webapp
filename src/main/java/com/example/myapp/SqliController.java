@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 @RestController
 public class SqliController {
@@ -22,11 +22,14 @@ public class SqliController {
     public String vulnerable(@RequestParam String username) {
         StringBuilder result = new StringBuilder();
 
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
         try {
             // ⚠️ Insecure: Direct concatenation of user input into SQL
-            Connection conn = DriverManager.getConnection(DB_CONN_STR, DB_USER, DB_PASSWORD);
-            String query = "SELECT * FROM users WHERE username = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            conn = DriverManager.getConnection(DB_CONN_STR, DB_USER, DB_PASSWORD);
+            String query = "SELECT id, name FROM users WHERE username = ?";
+            stmt = conn.prepareStatement(query);
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
@@ -36,9 +39,14 @@ public class SqliController {
 
             result.append("Secret: " + SECRET);
 
+            stmt.close();
             conn.close();
+        } catch (SQLException e) {
+            return "SQL Error: " + e.getMessage();
         } catch (Exception e) {
             return "Error: " + e.getMessage();
+        } finally {
+
         }
 
         return result.toString();
