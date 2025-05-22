@@ -11,25 +11,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @RestController
-public class SqliController {
+public class Sqli2Controller {
 
-    private static final String DB_CONN_STR = "jdbc://h2:mem:testdb";
+    private static final String DB_CONN_STR = "jdbc://h2:mem:test2db";
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "@#2kjndf3nkj!";
 
-    @GetMapping("/sqli")
-    public String vulnerable(@RequestParam String username) {
+    @GetMapping("/sqli2")
+    public String vulnerable(@RequestParam String str, @RequestParam int id) {
         StringBuilder result = new StringBuilder();
 
         Connection conn = null;
         PreparedStatement stmt = null;
 
         try {
-            // ⚠️ Insecure: Direct concatenation of user input into SQL
             conn = DriverManager.getConnection(DB_CONN_STR, DB_USER, DB_PASSWORD);
-            String query = "SELECT id, name FROM users WHERE username = ?";
+            String query = "SELECT id, name FROM tbl WHERE username = '" + str + "' AND id = " + Integer.toString(id);
             stmt = conn.prepareStatement(query);
-            stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
